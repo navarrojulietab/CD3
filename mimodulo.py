@@ -26,10 +26,11 @@ class ResumenNumerico:
 
   def calculo_de_desvio_estandar(self):
     media = self.calculo_de_media()
-    diferencias =[]
     var = 0
+    diferencias = []
     for i in self.datos:
-      var += (media - i) ** 2 / len(ingresos)
+      var += (media - i) ** 2 / len(self.datos)
+      diferencias.append(var)
     desvio_estandar = var ** 0.5
 
     return desvio_estandar
@@ -48,7 +49,7 @@ class ResumenNumerico:
     return [q1, q2, q3]
 
   def generacion_resumen_numerico(self):
-  res_num = {
+      res_num = {
         'Media': self.calculo_de_media(),
         'Mediana': self.calculo_de_mediana(),
         'Desvio': self.calculo_de_desvio_estandar(),
@@ -57,7 +58,7 @@ class ResumenNumerico:
         'Máximo': max(self.datos)
         }
 
-  return res_num
+      return res_num
 
   def muestra_resumen(self):
     res_num = self.generacion_resumen_numerico()
@@ -194,3 +195,4 @@ class Cualitativas():
       print('Hay evidencia suficiente para rechazar la hipótesis nula')
     else:
       print('Hay un error, no hay congruencia entre los resultados obtenidos')
+      print('Esto es para probar git')
