@@ -371,6 +371,10 @@ class Regresion():
         self.datos = datos
         self.y = datos['y']
         self.x = datos.drop('y', axis=1)
+        self.modelo = None
+        self.resultados = None
+        self.n = len(self.y)
+        self.k = len(self.x.columns)
 
     def evaluar(self, X, y):
         """
@@ -404,10 +408,16 @@ class RegresionLineal(Regresion, ResumenGrafico):
         Ajusta el modelo de regresión lineal.
 
         Agrega una constante a las variables independientes y ajusta un modelo OLS.
+        Retorna:
+        self.resultados (RegressionResults): Resultados del ajuste del modelo.
         """
         X = sm.add_constant(self.x)
         self.modelo = sm.OLS(self.y, X)
         self.resultados = self.modelo.fit()
+        self.scale = self.varianza_res()
+        self.ssr = self.calcular_ssr()
+        self.df_resid = self.n - self.k
+        return self.resultados
 
     def predecir(self,x, alfa = 0.05):
       """
@@ -500,7 +510,18 @@ class RegresionLineal(Regresion, ResumenGrafico):
         if self.resultados is None:
             raise Exception("El modelo debe ser ajustado antes de calcular la varianza residual.")
         varianza_res = self.resultados.mse_resid
-        return varianza_res 
+        return varianza_res
+    def calcular_ssr(self):
+        """
+        Calcula el SSR (Sum of Squares of Residuals) del modelo ajustado.
+
+        Retorna:
+        ssr (float): SSR.
+        """
+        if self.resultados is None:
+            raise Exception("El modelo debe ser ajustado antes de calcular el SSR.")
+        ssr = self.resultados.ssr
+        return ssr
 
     def estadisticas(self):
         """
@@ -602,6 +623,7 @@ class RegresionLogistica(Regresion):
         X_const = sm.add_constant(self.X_train)
         self.modelo = sm.Logit(self.y_train, X_const)
         self.resultados = self.modelo.fit()
+        return self.resultados
 
     def predecir_proba(self, X):
         """
@@ -717,7 +739,7 @@ class ChiCuadrado:
     Métodos:
     - test: Realiza el test de Chi-cuadrado para los datos observados y las probabilidades esperadas.
     """
-    
+
     def __init__(self, datos=None):
         """
         Inicializa la clase con los datos.
